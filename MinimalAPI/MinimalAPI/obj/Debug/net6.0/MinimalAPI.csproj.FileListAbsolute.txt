@@ -25,4 +25,3 @@ C:\Users\chave\source\repos\MinimalAPI\MinimalAPI\MinimalAPI\bin\Debug\net6.0\Sw
 C:\Users\chave\source\repos\MinimalAPI\MinimalAPI\MinimalAPI\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\chave\source\repos\MinimalAPI\MinimalAPI\MinimalAPI\obj\Debug\net6.0\MinimalAPI.csproj.AssemblyReference.cache
 C:\Users\chave\source\repos\MinimalAPI\MinimalAPI\MinimalAPI\obj\Debug\net6.0\MinimalAPI.MvcApplicationPartsAssemblyInfo.cs
-C:\Users\chave\source\repos\MinimalAPI\MinimalAPI\MinimalAPI\obj\Debug\net6.0\MinimalAPI.csproj.CopyComplete

@@ -1,5 +1,6 @@
-//LESSON 04 - Add Swagger
-// Installed Package Swashbuckle.Aspnetcore
+//LESSON 05 - FLUENT API 
+// Specified the type of object returned on GET CUSTOMERS and GET CUSTOMERS ASYNC
+// Changed initial route to SWAGGER
 
 using Microsoft.AspNetCore.Mvc;
 using MinimalAPI.Repositories;
@@ -20,15 +21,22 @@ app.UseSwaggerUI();
 //GET
 app.MapGet("/", () => "Hello World!");
 
-app.MapGet("/customers", ([FromServices] CustomerRepository crepo) => crepo.GetAll());
+//GET CUSTOMERS SPECIFYING THE RETURNED TYPE TO SWAGGER - NEW WAY WITH FLUENT API
+app.MapGet("/customers", ([FromServices] CustomerRepository crepo) =>
+{
+    return Results.Ok(crepo.GetAll());
+}).Produces<Customer>();
 
-app.MapGet("/customersAsync", async ([FromServices] CustomerRepository crepo) =>
+app.MapGet("/customersAsync", async
+    ([FromServices] CustomerRepository crepo) =>
 {
     await Task.Delay(1000);
     return crepo.GetAll();
-});
+}).Produces<List<Customer>>();
 
-app.MapGet("/customer/{id}", ([FromServices] CustomerRepository crepo, Guid Id) =>
+app.MapGet("/customer/{id}", //OLD WAY OF USING ATTRIBUTES
+    [ProducesResponseType(200,Type =typeof(Customer))]
+    ([FromServices] CustomerRepository crepo, Guid Id) =>
  {
      var customer = crepo.GetById(Id);
      return customer is not null ?
@@ -40,7 +48,7 @@ app.MapPost("/customers", ([FromServices] CustomerRepository crepo, Customer cus
 {
     crepo.Create(customer);
     return Results.Created($"/customers/{customer.Id}", customer);
-});
+}).Produces<Customer>();
 
 //UPDATE
 app.MapPut("/customers/{id}", ([FromServices] CustomerRepository crepo, Guid Id, Customer newCustomer) =>
@@ -49,7 +57,7 @@ app.MapPut("/customers/{id}", ([FromServices] CustomerRepository crepo, Guid Id,
     if (customer is null) return Results.NotFound();
     crepo.Update(newCustomer);
     return Results.Ok(newCustomer);
-});
+}).Produces<Customer>();
 
 //DELETE
 app.MapDelete("/customers/{id}", ([FromServices] CustomerRepository crepo, Guid Id) =>
