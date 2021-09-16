@@ -1,22 +1,43 @@
-//LESSON 07 - Authentication and Authorization
-//ALL ENDPOINTS MUST REQUEST AUTHORIZATION BY DEFAULT UNLESS
-//AllowAnonymous fluent API is used or, [AllowAnonymous] attribute is used (OLD WAY)
-
+//LESSON 08 - Authentication and Authorization
+//Configured SWAGGER to allow users to authenticate in it
 
 using Microsoft.AspNetCore.Mvc;
 using MinimalAPI.Repositories;
 using MinimalAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<CustomerRepository>();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(x =>
+{
+    x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Description="Jwt Authorization Header using JWT bearer scheme",
+        Name="CamiloAuth",
+        In=Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type=Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
+    });
+    x.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                }}, new List<string>()
+        }
+    });
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
-//UPDATED
+
 builder.Services.AddAuthorization( options =>
 {
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
@@ -29,7 +50,6 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-//ADDED
 app.UseAuthentication();
 app.UseAuthorization();
 
