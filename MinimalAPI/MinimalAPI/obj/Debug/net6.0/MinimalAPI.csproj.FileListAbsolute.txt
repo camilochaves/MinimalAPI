@@ -19,3 +19,4 @@ C:\Users\chave\source\repos\MinimalAPI\MinimalAPI\MinimalAPI\obj\Debug\net6.0\Mi
 C:\Users\chave\source\repos\MinimalAPI\MinimalAPI\MinimalAPI\obj\Debug\net6.0\ref\MinimalAPI.dll
 C:\Users\chave\source\repos\MinimalAPI\MinimalAPI\MinimalAPI\obj\Debug\net6.0\MinimalAPI.pdb
 C:\Users\chave\source\repos\MinimalAPI\MinimalAPI\MinimalAPI\obj\Debug\net6.0\MinimalAPI.genruntimeconfig.cache
+C:\Users\chave\source\repos\MinimalAPI\MinimalAPI\MinimalAPI\obj\Debug\net6.0\MinimalAPI.csproj.AssemblyReference.cache
