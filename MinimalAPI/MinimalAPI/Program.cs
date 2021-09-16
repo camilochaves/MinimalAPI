@@ -1,7 +1,6 @@
-//LESSON 06 - Authentication and Authorization
-//Added package Microsoft.AspNetCore.Authentication.JwtBeare
-//Configure some endpoints with fluent api RequireAuthorization() and
-//the old way using attributes [Authorize]
+//LESSON 07 - Authentication and Authorization
+//ALL ENDPOINTS MUST REQUEST AUTHORIZATION BY DEFAULT UNLESS
+//AllowAnonymous fluent API is used or, [AllowAnonymous] attribute is used (OLD WAY)
 
 
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +13,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<CustomerRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//ADDED
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
-builder.Services.AddAuthorization();
+
+//UPDATED
+builder.Services.AddAuthorization( options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+    .RequireAuthenticatedUser()
+    .Build();
+});
 
 var app = builder.Build();
 
@@ -32,7 +39,7 @@ app.MapGet("/", () => "Hello World!");
 app.MapGet("/customers", ([FromServices] CustomerRepository crepo) =>
 {
     return Results.Ok(crepo.GetAll());
-}).RequireAuthorization().Produces<Customer>();
+}).AllowAnonymous().Produces<Customer>();
 
 app.MapGet("/customersAsync", async
     ([FromServices] CustomerRepository crepo) =>
@@ -42,8 +49,7 @@ app.MapGet("/customersAsync", async
 }).Produces<List<Customer>>();
 
 app.MapGet("/customer/{id}", //OLD WAY OF USING ATTRIBUTES
-    [ProducesResponseType(200,Type =typeof(Customer))]
-    [Authorize]
+    [ProducesResponseType(200,Type =typeof(Customer))]    
     ([FromServices] CustomerRepository crepo, Guid Id) =>
  {
      var customer = crepo.GetById(Id);
@@ -52,7 +58,9 @@ app.MapGet("/customer/{id}", //OLD WAY OF USING ATTRIBUTES
  });
 
 //POST
-app.MapPost("/customers", ([FromServices] CustomerRepository crepo, Customer customer) =>
+app.MapPost("/customers", 
+    [AllowAnonymous]
+    ([FromServices] CustomerRepository crepo, Customer customer) =>
 {
     crepo.Create(customer);
     return Results.Created($"/customers/{customer.Id}", customer);
