@@ -1,5 +1,5 @@
-//LESSON 03 - REFACTORING
-// Created Models and Repositories Folder
+//LESSON 04 - Add Swagger
+// Installed Package Swashbuckle.Aspnetcore
 
 using Microsoft.AspNetCore.Mvc;
 using MinimalAPI.Repositories;
@@ -7,7 +7,15 @@ using MinimalAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<CustomerRepository>();
+//Added Swagger Config
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
+
+//Added Swagger Use
+app.UseSwagger();
+app.UseSwaggerUI();
 
 //GET
 app.MapGet("/", () => "Hello World!");
