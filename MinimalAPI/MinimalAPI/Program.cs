@@ -1,31 +1,38 @@
-//LESSON 05 - FLUENT API 
-// Specified the type of object returned on GET CUSTOMERS and GET CUSTOMERS ASYNC
-// Changed initial route to SWAGGER
+//LESSON 06 - Authentication and Authorization
+//Added package Microsoft.AspNetCore.Authentication.JwtBeare
+//Configure some endpoints with fluent api RequireAuthorization() and
+//the old way using attributes [Authorize]
+
 
 using Microsoft.AspNetCore.Mvc;
 using MinimalAPI.Repositories;
 using MinimalAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<CustomerRepository>();
-//Added Swagger Config
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+//ADDED
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-//Added Swagger Use
 app.UseSwagger();
 app.UseSwaggerUI();
+//ADDED
+app.UseAuthentication();
+app.UseAuthorization();
 
 //GET
 app.MapGet("/", () => "Hello World!");
 
-//GET CUSTOMERS SPECIFYING THE RETURNED TYPE TO SWAGGER - NEW WAY WITH FLUENT API
 app.MapGet("/customers", ([FromServices] CustomerRepository crepo) =>
 {
     return Results.Ok(crepo.GetAll());
-}).Produces<Customer>();
+}).RequireAuthorization().Produces<Customer>();
 
 app.MapGet("/customersAsync", async
     ([FromServices] CustomerRepository crepo) =>
@@ -36,6 +43,7 @@ app.MapGet("/customersAsync", async
 
 app.MapGet("/customer/{id}", //OLD WAY OF USING ATTRIBUTES
     [ProducesResponseType(200,Type =typeof(Customer))]
+    [Authorize]
     ([FromServices] CustomerRepository crepo, Guid Id) =>
  {
      var customer = crepo.GetById(Id);
